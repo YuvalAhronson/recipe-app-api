@@ -20,11 +20,12 @@ class Command(BaseCommand):
         Func receives args tuple and options dict.
         """
         self.stdout.write("Waiting for database...")
-        db_conn = None
-        while not db_conn:
+        db_up = False
+        while db_up is False:
             try:
-                db_conn = connections['default']
+                self.check(databases=['default'])
+                db_up = True
             except (Psycopg2OpError, OperationalError):
-                self.stdout.write('Database unavailable, waiting 1 second...')
-                time.sleep(0.1)
+                self.stdout.write('Database unavaliable, waiting 1 second...')
+                time.sleep(1)
         self.stdout.write(self.style.SUCCESS("Database avaliable!"))
